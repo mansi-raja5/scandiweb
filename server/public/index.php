@@ -26,11 +26,11 @@ if (class_exists($controllerClass)) {
 $router = new Inc\Router();
 
 // Define the routes
-$router->addRoute('GET', '/public/index.php/product', 'App\Controllers\Api\ProductController', 'listAction');
-$router->addRoute('GET', '/public/index.php/product/{id}', 'App\Controllers\Api\ProductController', 'listAction');
-$router->addRoute('DELETE', '/public/index.php/product/{id}', 'App\Controllers\Api\ProductController', 'deleteAction');
-$router->addRoute('POST', '/public/index.php/product', 'App\Controllers\Api\ProductController', 'addAction');
-$router->addRoute('POST', '/public/index.php/attribute', 'App\Controllers\Api\AttributeController', 'listAction');
+$router->addRoute('GET', '/server/public/index.php/product', 'App\Controllers\Api\ProductController', 'listAction');
+$router->addRoute('GET', '/server/public/index.php/product/{id}', 'App\Controllers\Api\ProductController', 'listAction');
+$router->addRoute('DELETE', '/server/public/index.php/product/{id}', 'App\Controllers\Api\ProductController', 'deleteAction');
+$router->addRoute('POST', '/serverpublic/index.php/product', 'App\Controllers\Api\ProductController', 'addAction');
+$router->addRoute('POST', '/server/public/index.php/attribute', 'App\Controllers\Api\AttributeController', 'listAction');
 
 // Route the request
 $router->route();
