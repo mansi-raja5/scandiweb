@@ -45,7 +45,7 @@ class ProductController extends BaseController
 
     /**
      * @OA\Get(
-     *     path="/scandiweb/server/public/index.php/product/{id}", tags={"Product APIs"},
+     *     path="/server/public/index.php/product/{id}", tags={"Product APIs"},
      *     summary="Get All products details / Get Specific product details",
      *     security={{"Auth_Key": {}}},
      *     @OA\Parameter(
@@ -105,7 +105,7 @@ class ProductController extends BaseController
 
     /**
      * @OA\Delete(
-     *     path="/scandiweb/server/public/index.php/product/{id}",  tags={"Product APIs"},
+     *     path="/server/public/index.php/product/{id}",  tags={"Product APIs"},
      *     summary="Delete a product",
      *     security={{"Auth_Key": {}}},
      *     @OA\Parameter(
@@ -167,7 +167,7 @@ class ProductController extends BaseController
 
     /**
      * @OA\Post(
-     *     path="/scandiweb/server/public/index.php/product", tags={"Product APIs"},
+     *     path="/server/public/index.php/product", tags={"Product APIs"},
      *     summary="Create a new product",
      *     security={{"Auth_Key": {}}},
      *     @OA\RequestBody(
