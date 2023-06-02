@@ -3,5 +3,9 @@
         "psr-4": {
             "App\\": "app/"
         }
-    }    
+    },
+    "require": {
+        "zircote/swagger-php": "^4.7",
+        "swagger-api/swagger-ui": "^4.19"
+    }
 }

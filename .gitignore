@@ -1,6 +1,5 @@
 /server/composer.phar
 /server/vendor/
-
-
 /server/inc/Config.php
 .DS_Store
+/server/.DS_Store

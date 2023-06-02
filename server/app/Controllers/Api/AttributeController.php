@@ -22,14 +22,27 @@ class AttributeController extends BaseController
      * @var 
      */
     private $apiUsersModel;
-    
+
 
     /**
-     * Summary of __construct
+     * @OA\Post(
+     *     path="/scandiweb/server/public/index.php/attribute", tags={"Attribute APIs"},
+     *     summary="Get attributes for a specific product type",
+     *     security={{"Auth_Key": {}}},
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="product_type_key", type="string", example="furniture")
+     *         )
+     *     ),
+     *     @OA\Response(response="200", description="Attributes retrieved successfully"),
+     *     @OA\Response(response="401", description="Unauthorized")
+     * )
      */
+
     public function __construct()
     {
-        $this->apiUsersModel =  new ApiUsersModel();
+        $this->apiUsersModel = new ApiUsersModel();
         $this->productTypeAttributesModel = new ProductTypeAttributesModel();
     }
 
@@ -57,11 +70,11 @@ class AttributeController extends BaseController
                 if (isset($headers['Auth_Key'])) {
                     $this->apiUsersModel->auth_key = $headers['Auth_Key'];
                 } else {
-                    echo json_encode(['status'=>402, 'msg'=>'Auth_key is not present']);
+                    echo json_encode(['status' => 402, 'msg' => 'Auth_key is not present']);
                     die(header('HTTP/1.1 402 Auth_key is not present'));
                 }
 
-                
+
 
                 //Verify the Auth Key
                 $Verified = $this->apiUsersModel->verify_AuthKey();
@@ -70,7 +83,7 @@ class AttributeController extends BaseController
 
                     //get the files data
                     $json = file_get_contents('php://input');
-                    $data = json_decode($json);                    
+                    $data = json_decode($json);
 
                     if ($this->validate_product_param($data->product_type_key)) {
                         $productTypeKey = $data->product_type_key;
@@ -83,7 +96,7 @@ class AttributeController extends BaseController
                     echo json_encode($products);
 
                 } else {
-                    echo json_encode(['status'=>401, 'msg'=>'Unauthorized Key Used']);
+                    echo json_encode(['status' => 401, 'msg' => 'Unauthorized Key Used']);
                     die(header('HTTP/1.1 401 Unauthorized Key Used'));
                 }
 
