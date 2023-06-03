@@ -5,10 +5,10 @@ use Inc\Database;
 
 class ProductTypeAttributesModel extends Database
 {
-	protected $attributeId;
-	protected $attributeKey;
-	protected $attributeLabel;
-	protected $productTypeKey;
+	private $attributeId;
+	private $attributeKey;
+	private $attributeLabel;
+	private $productTypeKey;
 
 	public function __construct($attributeId = null, $attributeKey = null, $attributeLabel = null, $productTypeKey = null)
 	{
@@ -66,4 +66,3 @@ class ProductTypeAttributesModel extends Database
 		return $result;
 	}
 }
-?>

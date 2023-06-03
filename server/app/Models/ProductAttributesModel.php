@@ -6,11 +6,11 @@ use Inc\Database;
 class ProductAttributesModel extends Database
 {
 	private $table = 'product_attributes';
-	protected $productAttributesId;
-	protected $productId;
-	protected $attributeId;
-	protected $attributeValue;
-	protected $createdAt;
+	private $productAttributesId;
+	private $productId;
+	private $attributeId;
+	private $attributeValue;
+	private $createdAt;
 
 	public function __construct($productAttributesId = null, $productId = null, $attributeId = null, $attributeValue = null)
 	{
@@ -121,4 +121,3 @@ class ProductAttributesModel extends Database
 		return $attributes;
 	}
 }
-?>

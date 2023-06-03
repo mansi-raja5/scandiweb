@@ -3,8 +3,8 @@ namespace App\Models;
 
 class ProductType
 {
-	protected $productTypeKey;
-	protected $productTypeLabel;
+	private $productTypeKey;
+	private $productTypeLabel;
 
 	public function __construct($productTypeKey, $productTypeLabel)
 	{
@@ -32,4 +32,3 @@ class ProductType
 		$this->productTypeLabel = $productTypeLabel;
 	}
 }
-?>
