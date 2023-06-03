@@ -32,7 +32,6 @@ class ProductController extends BaseController
     public function __construct()
     {
         parent::__construct();
-        $this->productModel = new ProductModel();
     }
     /**
      * @OA\Get(
@@ -62,6 +61,7 @@ class ProductController extends BaseController
         header('Access-Control-Allow-Headers: Origin, Content-type, Auth_Key, Accept');
         //Validating request
         $this->checkApiAuth('GET');
+        $this->productModel = new ProductModel();
         $this->productModel->setProductId($productId);
         $this->productModel->setmultiplyPrice(2);
         $products = $this->productModel->listProducts();
@@ -94,6 +94,7 @@ class ProductController extends BaseController
         //Validating request
 
         $this->checkApiAuth('DELETE');
+        $this->productModel = new ProductModel();
         $this->productModel->setProductId($productId);
         if ($this->productModel->deleteProduct()) {
             echo json_encode(array('message' => 'Product Deleted Successfully'));
