@@ -1,4 +1,5 @@
 /server/composer.phar
+/server/composer.lock
 /server/vendor/
 /server/inc/Config.php
 .DS_Store
