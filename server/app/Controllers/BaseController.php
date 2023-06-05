@@ -8,7 +8,7 @@ class BaseController
 {
     /**
      * Summary of apiUsersModel
-     * @var 
+     * @var
      */
     private $apiUsersModel;
     public function __construct()
@@ -16,17 +16,10 @@ class BaseController
         $this->apiUsersModel = new ApiUsersModel();
     }
 
-    /** 
-     * __call magic method. 
-     */
-    /*public function __call($name, $arguments)
-    {
-        $this->sendOutput('', array('HTTP/1.1 404 Not Found222'));
-    }*/
-    /** 
-     * Get URI elements. 
-     * 
-     * @return array 
+    /**
+     * Get URI elements.
+     *
+     * @return array
      */
     protected function getUriSegments()
     {
@@ -34,21 +27,21 @@ class BaseController
         $uri = explode('/', $uri);
         return $uri;
     }
-    /** 
-     * Get querystring params. 
-     * 
-     * @return array 
+    /**
+     * Get querystring params.
+     *
+     * @return array
      */
     protected function getQueryStringParams()
     {
         parse_str($_SERVER['QUERY_STRING'], $query);
         return $query;
     }
-    /** 
-     * Send API output. 
-     * 
-     * @param mixed $data 
-     * @param string $httpHeader 
+    /**
+     * Send API output.
+     *
+     * @param mixed $data
+     * @param string $httpHeader
      */
     protected function sendOutput($data, $httpHeaders = array())
     {
@@ -61,11 +54,11 @@ class BaseController
         echo $data;
         exit;
     }
-    /** 
+    /**
      * check API auth
-     * 
-     * @param mixed $data 
-     * @param string $httpHeader 
+     *
+     * @param mixed $data
+     * @param string $httpHeader
      */
     protected function checkApiAuth($requestMethod)
     {
@@ -73,14 +66,16 @@ class BaseController
         $headers = apache_request_headers();
 
         if (!isset($headers['Auth_Key'])) {
-            echo json_encode(['status' => 402, 'msg' => 'Auth_key is not present']);
-            die(header('HTTP/1.1 402 Auth_key is not present'));
+            echo json_encode(['status' => 402, 'msg' => 'Auth_Key is not present']);
+            header('HTTP/1.1 402 Auth_Key is not present');
+            die;
         }
 
         $this->apiUsersModel->setAuthKey($headers['Auth_Key']);
-        if ($this->apiUsersModel->verifyAuthKey() != TRUE) {
+        if (!$this->apiUsersModel->verifyAuthKey()) {
             echo json_encode(['status' => 401, 'msg' => 'Unauthorized Key Used']);
-            die(header('HTTP/1.1 401 Unauthorized Key Used'));
+            header('HTTP/1.1 401 Unauthorized Key Used');
+            die;
         }
         return true;
     }
@@ -89,12 +84,14 @@ class BaseController
     {
         //Validating request
         if ($_SERVER['REQUEST_METHOD'] !== $requestMethod) {
-            die(header('HTTP/1.1 400 Request Method is Not Valid'));
+            header('HTTP/1.1 400 Request Method is Not Valid');
+            die;
         }
 
         // Validating Content type
         if ($_SERVER['CONTENT_TYPE'] !== 'application/json') {
-            die(header('HTTP/1.1 204 Content type not valid'));
+            header('HTTP/1.1 204 Content type not valid');
+            die;
         }
     }
 
