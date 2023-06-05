@@ -47,10 +47,9 @@ class Database
 
     public function query($query = "", $params = [])
     {
-
         try {
             $stmt = $this->executeStatement($query, $params);
-            $stmt->close();
+            return $this->getConnection()->affected_rows;
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage());
         }
@@ -96,7 +95,12 @@ class Database
         }
     }
 
-
+    /**
+     * Execute a prepared statement with parameters
+     * @param string $sql The SQL query string
+     * @param array $params The array of parameters to bind to the prepared statement
+     * @return bool True on success, false on failure
+     */
     private function executeStatement($query = "", $params = [])
     {
         try {
@@ -104,13 +108,37 @@ class Database
             if ($stmt === false) {
                 throw new \Exception("Unable to do prepared statement: " . $query);
             }
-            if ($params) {
-                $stmt->bind_param($params[0], $params[1]);
+            if (!empty($params)) {
+                $types = '';
+                $values = [];
+                foreach ($params as $param) {
+                    $types .= $this->getBindType($param);
+                    $values[] = $param;
+                }
+                $stmt->bind_param($types, ...$values);
             }
             $stmt->execute();
             return $stmt;
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage());
+        }
+    }
+
+    /**
+     * Get the bind type based on the parameter value
+     * @param mixed $param The parameter value
+     * @return string The bind type character
+     */
+    private function getBindType($param)
+    {
+        if (is_int($param)) {
+            return 'i'; // Integer
+        } elseif (is_float($param)) {
+            return 'd'; // Double
+        } elseif (is_string($param)) {
+            return 's'; // String
+        } else {
+            return 'b'; // Blob or unknown
         }
     }
 

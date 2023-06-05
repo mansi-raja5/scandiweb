@@ -42,6 +42,7 @@ class ProductModel extends AbstractProductModel
         }
         return $products;
     }
+
     /**
      * Summary of deleteProduct
      * @return bool
@@ -56,6 +57,31 @@ class ProductModel extends AbstractProductModel
         $this->query($sql);
         return true;
     }
+
+    /**
+     * Mass delete products by IDs
+     * @param array $productIds The array of product IDs to delete
+     * @return int The number of products deleted
+     */
+    public function massDeleteProducts($productIds)
+    {
+        // Clean data
+        foreach ($productIds as $index => $productId) {
+            $productIds[$index] = filter_var($productId, FILTER_VALIDATE_INT);
+        }
+
+        // Prepare the placeholders for the IN clause
+        $placeholders = implode(',', array_fill(0, count($productIds), '?'));
+
+        // Delete the product attributes
+        $attributeSql = "DELETE FROM product_attributes WHERE product_id IN ($placeholders)";
+        $this->query($attributeSql, $productIds);
+
+        // Delete the products
+        $productSql = "DELETE FROM $this->table WHERE product_id IN ($placeholders)";
+        return $this->query($productSql, $productIds);
+    }
+
     /**
      * Summary of saveProduct
      * @return mixed

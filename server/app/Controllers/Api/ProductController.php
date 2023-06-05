@@ -23,7 +23,7 @@ class ProductController extends BaseController
 
     /**
      * @OA\Get(
-     *     path="/server/public/index.php/product/{id}", tags={"Product APIs"},
+     *     path="/product/{id}", tags={"Product APIs"},
      *     summary="Get All products details / Get Specific product details",
      *     security={{"Auth_Key": {}}},
      *     @OA\Parameter(
@@ -40,6 +40,7 @@ class ProductController extends BaseController
      *     @OA\Response(response="404", description="Not found")
      * )
      */
+
     public function listAction($productId = null)
     {
         //header
@@ -54,21 +55,25 @@ class ProductController extends BaseController
         $products = $this->productModel->listProducts();
         echo json_encode($products);
     }
+
     /**
      * @OA\Delete(
-     *     path="/server/public/index.php/product/{id}",  tags={"Product APIs"},
-     *     summary="Delete a product",
+     *     path="/product/{id}",  tags={"Product APIs"},
+     *     summary="Delete multiple products",
      *     security={{"Auth_Key": {}}},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="Product ID",
+     *     @OA\RequestBody(
      *         required=true,
-     *         @OA\Schema(type="integer")
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 type="array",
+     *                 @OA\Items(type="integer"),
+     *             )
+     *         )
      *     ),
      *     @OA\Response(response="200", description="Product deleted successfully"),
      *     @OA\Response(response="401", description="Unauthorized"),
-     *     @OA\Response(response="404", description="Product not found")
+     *     @OA\Response(response="404", description="404 not found")
      * )
      */
     public function deleteAction($productId = null)
@@ -78,20 +83,32 @@ class ProductController extends BaseController
         header('Content-type: application/json');
         header('Access-Control-Allow-Methods: DELETE');
         header('Access-Control-Allow-Headers: Origin, Content-type, Auth_Key, Accept');
-        //Validating request
 
+        //Validating request
         $this->checkApiAuth('DELETE');
+
+        // Retrieve the request body containing the product IDs to delete
+        $requestBody = json_decode(file_get_contents('php://input'), true);
+        if (!is_array($requestBody)) {
+            echo json_encode(array('message' => 'Invalid request body'));
+            return;
+        }
+
+        $productIds = $requestBody;
+
         $this->productModel = new ProductModel();
-        $this->productModel->setProductId($productId);
-        if ($this->productModel->deleteProduct()) {
-            echo json_encode(array('message' => 'Product Deleted Successfully'));
+        $deleteCount = $this->productModel->massDeleteProducts($productIds);
+
+        if ($deleteCount > 0) {
+            echo json_encode(array('message' => $deleteCount . ' product(s) deleted successfully'));
         } else {
-            echo json_encode(array('message' => 'Product cannot be Deleted right now..!'));
+            echo json_encode(array('message' => 'No products found or could not be deleted'));
         }
     }
+
     /**
      * @OA\Post(
-     *     path="/server/public/index.php/product", tags={"Product APIs"},
+     *     path="/product", tags={"Product APIs"},
      *     summary="Create a new product",
      *     security={{"Auth_Key": {}}},
      *     @OA\RequestBody(
@@ -147,23 +164,5 @@ class ProductController extends BaseController
         } catch (\Exception $e) {
             header("HTTP/1.1 {$e->getCode()} {$e->getMessage()}");
         }
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getProductModel()
-    {
-        return $this->productModel;
-    }
-
-    /**
-     * @param mixed $productModel
-     * @return self
-     */
-    public function setProductModel($productModel): self
-    {
-        $this->productModel = $productModel;
-        return $this;
     }
 }

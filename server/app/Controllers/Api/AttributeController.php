@@ -15,7 +15,7 @@ class AttributeController extends BaseController
 
     /**
      * @OA\Post(
-     *     path="/server/public/index.php/attribute", tags={"Attribute APIs"},
+     *     path="/attribute", tags={"Attribute APIs"},
      *     summary="Get attributes for a specific product type",
      *     security={{"Auth_Key": {}}},
      *     @OA\RequestBody(
@@ -27,16 +27,6 @@ class AttributeController extends BaseController
      *     @OA\Response(response="200", description="Attributes retrieved successfully"),
      *     @OA\Response(response="401", description="Unauthorized")
      * )
-     */
-
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
-     * Summary of list
-     * @return void
      */
     public function listAction()
     {
@@ -51,7 +41,8 @@ class AttributeController extends BaseController
         $json = file_get_contents('php://input');
         $data = json_decode($json);
         if (!$data) {
-            die(header('HTTP/1.1 402 POST Attribute data is not provided!'));
+            header('HTTP/1.1 402 POST Attribute data is not provided!');
+            die;
         }
 
         $productTypeKey = $this->validateParameters($data->product_type_key);
