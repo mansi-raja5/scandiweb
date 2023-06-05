@@ -21,9 +21,13 @@ class ProductController extends BaseController
 {
     private $productModel;
 
+    const CONTENT_TYPE_JSON = 'Content-type: application/json';
+    const ACCESS_CONTROL_ALLOW_ORIGIN = 'Access-Control-Allow-Origin: *';
+    const ACCESS_CONTROL_ALLOW_HEADERS = 'Access-Control-Allow-Headers: Origin, Content-type, Auth_Key, Accept';
+
     /**
      * @OA\Get(
-     *     path="/product/{id}", tags={"Product APIs"},
+     *     path="/server/product/{id}", tags={"Product APIs"},
      *     summary="Get All products details / Get Specific product details",
      *     security={{"Auth_Key": {}}},
      *     @OA\Parameter(
@@ -44,10 +48,10 @@ class ProductController extends BaseController
     public function listAction($productId = null)
     {
         //header
-        header('Access-Control-Allow-Origin: *');
-        header('Content-type: application/json');
+        header(self::ACCESS_CONTROL_ALLOW_ORIGIN);
+        header(self::CONTENT_TYPE_JSON);
         header('Access-Control-Allow-Methods: GET');
-        header('Access-Control-Allow-Headers: Origin, Content-type, Auth_Key, Accept');
+        header(self::ACCESS_CONTROL_ALLOW_HEADERS);
         //Validating request
         $this->checkApiAuth('GET');
         $this->productModel = new ProductModel();
@@ -58,7 +62,7 @@ class ProductController extends BaseController
 
     /**
      * @OA\Delete(
-     *     path="/product/{id}",  tags={"Product APIs"},
+     *     path="/server/product",  tags={"Product APIs"},
      *     summary="Delete multiple products",
      *     security={{"Auth_Key": {}}},
      *     @OA\RequestBody(
@@ -76,13 +80,13 @@ class ProductController extends BaseController
      *     @OA\Response(response="404", description="404 not found")
      * )
      */
-    public function deleteAction($productId = null)
+    public function deleteAction()
     {
         //header
-        header('Access-Control-Allow-Origin: *');
-        header('Content-type: application/json');
+        header(self::ACCESS_CONTROL_ALLOW_ORIGIN);
+        header(self::CONTENT_TYPE_JSON);
         header('Access-Control-Allow-Methods: DELETE');
-        header('Access-Control-Allow-Headers: Origin, Content-type, Auth_Key, Accept');
+        header(self::ACCESS_CONTROL_ALLOW_HEADERS);
 
         //Validating request
         $this->checkApiAuth('DELETE');
@@ -108,7 +112,7 @@ class ProductController extends BaseController
 
     /**
      * @OA\Post(
-     *     path="/product", tags={"Product APIs"},
+     *     path="/server/product", tags={"Product APIs"},
      *     summary="Create a new product",
      *     security={{"Auth_Key": {}}},
      *     @OA\RequestBody(
@@ -137,10 +141,10 @@ class ProductController extends BaseController
     public function addAction()
     {
         //header
-        header('Access-Control-Allow-Origin: *');
-        header('Content-type: application/json');
+        header(self::ACCESS_CONTROL_ALLOW_ORIGIN);
+        header(self::CONTENT_TYPE_JSON);
         header('Access-Control-Allow-Methods: POST');
-        header('Access-Control-Allow-Headers: Origin, Content-type, Auth_Key, Accept');
+        header(self::ACCESS_CONTROL_ALLOW_HEADERS);
 
         $this->checkApiAuth('POST');
 
@@ -148,7 +152,8 @@ class ProductController extends BaseController
         $json = file_get_contents('php://input');
         $data = json_decode($json);
         if (!$data) {
-            die(header('HTTP/1.1 402 POST product data is not provided!'));
+            header('HTTP/1.1 402 POST product data is not provided!');
+            die;
         }
 
         try {

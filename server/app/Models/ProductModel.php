@@ -13,8 +13,14 @@ class ProductModel extends AbstractProductModel
     private $productType;
     private $table = 'products';
 
-    public function __construct($productId = null, $userId = null, $productName = null, $productSKU = null, $productPrice = null, $productTypeKey = null)
-    {
+    public function __construct(
+        $productId = null,
+        $userId = null,
+        $productName = null,
+        $productSKU = null,
+        $productPrice = null,
+        $productTypeKey = null
+    ) {
         parent::__construct($productId, $userId, $productName, $productSKU, $productPrice, $productTypeKey);
     }
     public function getProductType()
@@ -98,7 +104,7 @@ class ProductModel extends AbstractProductModel
         // Check if SKU already exists
         $existingProduct = $this->getProductBySKU($this->getProductSKU());
         if (count($existingProduct)) {
-            $result = ['Failure' => 'SKU is present in the system! Please try with the other SKU'];
+            $result = ['message' => 'SKU is present in the system! Please try with the other SKU'];
             return json_encode($result);
         }
         $data = array(
@@ -120,9 +126,9 @@ class ProductModel extends AbstractProductModel
             }
         }
         if ($productId) {
-            return json_encode(array('success' => 'Product Added Successfully'));
+            return json_encode(array('message' => 'Product Added Successfully'));
         } else {
-            return json_encode(array('failure' => 'Product cannot be added right now..!'));
+            return json_encode(array('message' => 'Product cannot be added right now..!'));
         }
     }
     private function getProductBySKU($sku)

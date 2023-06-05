@@ -37,8 +37,11 @@ class Router
                 $actionName = $route['action'];
                 // Create a new instance of the controller
                 $controller = new $controllerName();
-                // Call the action method on the controller with any captured parameters
-                call_user_func_array([$controller, $actionName], $matches);
+                if (array_key_exists('id', $matches)) {
+                    call_user_func_array([$controller, $actionName], [$matches['id']]);
+                } else {
+                    call_user_func([$controller, $actionName]);
+                }
                 return;
             }
         }
