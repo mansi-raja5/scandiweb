@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Inc\Database;
@@ -20,7 +21,6 @@ class ProductAttributesModel extends Database
 		$this->attributeValue = $attributeValue;
 		$this->createdAt = date('Y-m-d H:m:s');
 		parent::__construct();
-
 	}
 
 	public function getProductAttributesId()
@@ -77,10 +77,10 @@ class ProductAttributesModel extends Database
 		$this->createdAt = date('Y-m-d H:m:s');
 
 		$data = array(
-			'product_id' => $this->escape_value($this->productId),
-			'attribute_id' => $this->escape_value($this->attributeId),
-			'attribute_value' => $this->escape_value($this->attributeValue),
-			'created_at' => $this->escape_value($this->createdAt)
+			'product_id' => $this->escapeValue($this->productId),
+			'attribute_id' => $this->escapeValue($this->attributeId),
+			'attribute_value' => $this->escapeValue($this->attributeValue),
+			'created_at' => $this->escapeValue($this->createdAt)
 		);
 
 		$productAttributeId = $this->insert($this->table, $data);

@@ -19,20 +19,8 @@ use App\Models\ProductModel;
  */
 class ProductController extends BaseController
 {
-    /**
-     * Summary of productModel
-     * @var 
-     */
-    private $productModel; //final
-    /**
-     * Summary of __construct
-     * @param \App\Models\ProductModel $productModel
-     * @param \App\Models\ApiUsersModel $apiUsersModel
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
+    private $productModel;
+
     /**
      * @OA\Get(
      *     path="/server/public/index.php/product/{id}", tags={"Product APIs"},
@@ -63,7 +51,6 @@ class ProductController extends BaseController
         $this->checkApiAuth('GET');
         $this->productModel = new ProductModel();
         $this->productModel->setProductId($productId);
-        $this->productModel->setmultiplyPrice(2);
         $products = $this->productModel->listProducts();
         echo json_encode($products);
     }
@@ -169,8 +156,9 @@ class ProductController extends BaseController
     {
         return $this->productModel;
     }
+
     /**
-     * @param mixed $productModel 
+     * @param mixed $productModel
      * @return self
      */
     public function setProductModel($productModel): self

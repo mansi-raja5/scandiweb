@@ -33,17 +33,16 @@ class ApiUsersModel extends Database
     {
         global $database;
         $this->email = trim(htmlspecialchars(strip_tags($this->email)));
-        $sql = "SELECT apiuser_id FROM " . $this->table . " WHERE 
-                email = '" . $database->escape_value($this->email) . "' ";
+        $sql = "SELECT apiuser_id FROM " . $this->table . " WHERE
+                email = '" . $database->escapeValue($this->email) . "' ";
 
         $result = $database->query($sql);
         $info = $database->fetch_row($result);
 
         if (empty($info)) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     //create ApiUser
@@ -67,11 +66,11 @@ class ApiUsersModel extends Database
         global $database;
 
         $sql = "INSERT INTO $this->table (firstname, lastname, email, password, auth_key)
-                VALUES ('" . $database->escape_value($this->firstname) . "',
-                        '" . $database->escape_value($this->lastname) . "',
-                        '" . $database->escape_value($this->email) . "',
-                        '" . $database->escape_value($hashed_password) . "',
-                        '" . $database->escape_value($auth_key) . "')";
+                VALUES ('" . $database->escapeValue($this->firstname) . "',
+                        '" . $database->escapeValue($this->lastname) . "',
+                        '" . $database->escapeValue($this->email) . "',
+                        '" . $database->escapeValue($hashed_password) . "',
+                        '" . $database->escapeValue($auth_key) . "')";
 
         $user_saved = $database->query($sql);
 
@@ -94,8 +93,7 @@ class ApiUsersModel extends Database
                 WHERE apiuser_id = '$this->apiuser_id'";
 
         $result = $database->query($sql);
-        $userinfo = $database->fetch_row($result);
-        return $userinfo;
+        return $database->fetch_row($result);
     }
 
     // function to check users credentials
@@ -107,22 +105,22 @@ class ApiUsersModel extends Database
         global $database;
 
         $sql = "SELECT apiuser_id, firstname, lastname, email, password FROM " . $this->table . "
-        WHERE email = '" . $database->escape_value($this->email) . "'";
+        WHERE email = '" . $database->escapeValue($this->email) . "'";
 
         $result = $database->query($sql);
-        $user_info = $database->fetch_row($result);
+        $userInfo = $database->fetch_row($result);
 
-        if (!empty($user_info)) {
+        if (!empty($userInfo)) {
             //match the password
-            $hashed_password = $user_info['password'];
+            $hashedPassword = $userInfo['password'];
 
             $password = trim(htmlspecialchars(strip_tags($this->password)));
 
             //match password using bcrypt
-            $match_password = Bcrypt::checkPassword($password, $hashed_password);
+            $matchPassword = Bcrypt::checkPassword($password, $hashedPassword);
 
-            if ($match_password) {
-                return $user_info;
+            if ($matchPassword) {
+                return $userInfo;
             } else {
                 return false;
             }
@@ -134,13 +132,12 @@ class ApiUsersModel extends Database
     {
         $this->setAuthKey(trim(htmlspecialchars(strip_tags($this->getAuthKey()))));
 
-        $ApiUserInfo = $this->select("SELECT apiuser_id, firstname, lastname, email, auth_key FROM " . $this->table . " WHERE auth_key = '" . $this->escape_value($this->getAuthKey()) . "'");
+        $ApiUserInfo = $this->select("SELECT apiuser_id, firstname, lastname, email, auth_key FROM " . $this->table . " WHERE auth_key = '" . $this->escapeValue($this->getAuthKey()) . "'");
 
         if (empty($ApiUserInfo)) {
             return false;
-        } else {
-            return true;
         }
+        return true;
     }
 
     /**
@@ -152,7 +149,7 @@ class ApiUsersModel extends Database
     }
 
     /**
-     * @param mixed $authKey 
+     * @param mixed $authKey
      * @return self
      */
     public function setAuthKey($authKey): self

@@ -1,4 +1,5 @@
 <?php
+
 namespace Inc;
 
 class Database
@@ -37,8 +38,9 @@ class Database
         }
     }
 
-    public function query($query = "", $params = []){
-    
+    public function query($query = "", $params = [])
+    {
+
         try {
             $stmt = $this->executeStatement($query, $params);
             $stmt->close();
@@ -47,7 +49,8 @@ class Database
         }
     }
 
-    public function insert($table, $data) {
+    public function insert($table, $data)
+    {
         $columns = implode(", ", array_keys($data));
         $values = "'" . implode("', '", array_values($data)) . "'";
         $query = "INSERT INTO $table ($columns) VALUES ($values)";
@@ -59,7 +62,8 @@ class Database
         }
     }
 
-    public function update($table, $data, $condition) {
+    public function update($table, $data, $condition)
+    {
         $set = '';
         foreach ($data as $key => $value) {
             $set .= "$key = '$value', ";
@@ -74,7 +78,8 @@ class Database
         }
     }
 
-    public function delete($table, $condition) {
+    public function delete($table, $condition)
+    {
         $query = "DELETE FROM $table WHERE $condition";
 
         if ($this->connection->query($query) === true) {
@@ -103,14 +108,14 @@ class Database
     }
 
     //method to filter input and output
-    public function escape_value($value)
+    public function escapeValue($value)
     {
         $value = $this->getConnection()->real_escape_string($value);
         return $value;
     }
 
     //close sql connection
-    public function close_connection()
+    public function closeConnection()
     {
         $this->connection->close();
     }

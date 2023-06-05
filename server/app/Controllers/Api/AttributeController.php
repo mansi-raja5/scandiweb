@@ -11,18 +11,7 @@ use App\Models\ProductTypeAttributesModel;
  */
 class AttributeController extends BaseController
 {
-    /**
-     * Summary of productTypeAttributesModel
-     * @var 
-     */
     private $productTypeAttributesModel;
-
-    /**
-     * Summary of apiUsersModel
-     * @var 
-     */
-    private $apiUsersModel;
-
 
     /**
      * @OA\Post(
@@ -43,7 +32,6 @@ class AttributeController extends BaseController
     public function __construct()
     {
         parent::__construct();
-        $this->productTypeAttributesModel = new ProductTypeAttributesModel();
     }
 
     /**
@@ -67,7 +55,7 @@ class AttributeController extends BaseController
         }
 
         $productTypeKey = $this->validateParameters($data->product_type_key);
-
+        $this->productTypeAttributesModel = new ProductTypeAttributesModel();
         $this->productTypeAttributesModel->setProductTypeKey($productTypeKey);
         $products = $this->productTypeAttributesModel->getAttributesByType();
         echo json_encode($products);
