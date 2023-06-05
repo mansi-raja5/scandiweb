@@ -13,8 +13,8 @@ use App\Models\ProductModel;
  * @OA\SecurityScheme(
  *     type="apiKey",
  *     in="header",
- *     securityScheme="Auth_Key",
- *     name="Auth_Key"
+ *     securityScheme="Auth_key",
+ *     name="Auth_key"
  * )
  */
 class ProductController extends BaseController
@@ -23,13 +23,13 @@ class ProductController extends BaseController
 
     const CONTENT_TYPE_JSON = 'Content-type: application/json';
     const ACCESS_CONTROL_ALLOW_ORIGIN = 'Access-Control-Allow-Origin: *';
-    const ACCESS_CONTROL_ALLOW_HEADERS = 'Access-Control-Allow-Headers: Origin, Content-type, Auth_Key, Accept';
+    const ACCESS_CONTROL_ALLOW_HEADERS = 'Access-Control-Allow-Headers: Origin, Content-type, Auth_key, Accept';
 
     /**
      * @OA\Get(
      *     path="/server/product/{id}", tags={"Product APIs"},
      *     summary="Get All products details / Get Specific product details",
-     *     security={{"Auth_Key": {}}},
+     *     security={{"Auth_key": {}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -64,7 +64,7 @@ class ProductController extends BaseController
      * @OA\Delete(
      *     path="/server/product",  tags={"Product APIs"},
      *     summary="Delete multiple products",
-     *     security={{"Auth_Key": {}}},
+     *     security={{"Auth_key": {}}},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\MediaType(
@@ -114,7 +114,7 @@ class ProductController extends BaseController
      * @OA\Post(
      *     path="/server/product", tags={"Product APIs"},
      *     summary="Create a new product",
-     *     security={{"Auth_Key": {}}},
+     *     security={{"Auth_key": {}}},
      *     @OA\RequestBody(
      *         @OA\JsonContent(
      *             type="object",

@@ -65,13 +65,13 @@ class BaseController
         $this->checkHeaders($requestMethod);
         $headers = apache_request_headers();
 
-        if (!isset($headers['Auth_Key'])) {
-            echo json_encode(['status' => 402, 'msg' => 'Auth_Key is not present']);
-            header('HTTP/1.1 402 Auth_Key is not present');
+        if (!isset($headers['Auth_key'])) {
+            echo json_encode(['status' => 402, 'msg' => 'Auth_key is not present']);
+            header('HTTP/1.1 402 Auth_key is not present');
             die;
         }
 
-        $this->apiUsersModel->setAuthKey($headers['Auth_Key']);
+        $this->apiUsersModel->setAuthKey($headers['Auth_key']);
         if (!$this->apiUsersModel->verifyAuthKey()) {
             echo json_encode(['status' => 401, 'msg' => 'Unauthorized Key Used']);
             header('HTTP/1.1 401 Unauthorized Key Used');

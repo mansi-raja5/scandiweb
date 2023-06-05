@@ -17,7 +17,7 @@ class AttributeController extends BaseController
      * @OA\Post(
      *     path="/attribute", tags={"Attribute APIs"},
      *     summary="Get attributes for a specific product type",
-     *     security={{"Auth_Key": {}}},
+     *     security={{"Auth_key": {}}},
      *     @OA\RequestBody(
      *         @OA\JsonContent(
      *             type="object",
@@ -34,7 +34,7 @@ class AttributeController extends BaseController
         header('Access-Control-Allow-Origin: *');
         header('Content-type: application/json');
         header('Access-Control-Allow-Methods: POST');
-        header('Access-Control-Allow-Headers: Origin, Content-type, Auth_Key, Accept');
+        header('Access-Control-Allow-Headers: Origin, Content-type, Auth_key, Accept');
 
         $this->checkApiAuth('POST');
         //get the files data
