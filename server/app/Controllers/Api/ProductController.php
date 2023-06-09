@@ -27,24 +27,14 @@ class ProductController extends BaseController
 
     /**
      * @OA\Get(
-     *     path="/server/public/index.php/product/{id}", tags={"Product APIs"},
-     *     summary="Get All products details / Get Specific product details",
+     *     path="/server/public/index.php/product", tags={"Product APIs"},
+     *     summary="Get All products details",
      *     security={{"Auth_key": {}}},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=false,
-     *         description="Product ID",
-     *         @OA\Schema(
-     *             type="integer"
-     *         )
-     *     ),
      *     @OA\Response(response="200", description="Product details retrieved successfully"),
      *     @OA\Response(response="401", description="Unauthorized"),
      *     @OA\Response(response="404", description="Not found")
      * )
      */
-
     public function listAction($productId = null)
     {
         //header
@@ -59,6 +49,30 @@ class ProductController extends BaseController
         $products = $this->productModel->listProducts();
         echo json_encode($products);
     }
+
+    /**
+     * @OA\Get(
+     *     path="/server/public/index.php/product/{id}", tags={"Product APIs"},
+     *     summary="Get Specific product details",
+     *     security={{"Auth_key": {}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Product ID",
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(response="200", description="Product details retrieved successfully"),
+     *     @OA\Response(response="401", description="Unauthorized"),
+     *     @OA\Response(response="404", description="Not found")
+     * )
+     */
+    public function listActionById($productId = null)
+    {
+    }
+
 
     /**
      * @OA\Delete(
