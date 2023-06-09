@@ -1,5 +1,38 @@
+# server
 server/composer.phar
 server/vendor/
 server/inc/Config.php
-.DS_Store
 server/.DS_Store
+
+
+# client
+
+# logs
+logs
+client/*.log
+client/npm-debug.log*
+client/yarn-debug.log*
+client/yarn-error.log*
+client/pnpm-debug.log*
+client/lerna-debug.log*
+
+client/node_modules
+.DS_Store
+dist
+dist-ssr
+coverage
+*.local
+*.zip
+
+/cypress/videos/
+/cypress/screenshots/
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
