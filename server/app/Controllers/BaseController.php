@@ -65,13 +65,13 @@ class BaseController
         $this->checkHeaders($requestMethod);
         $headers = apache_request_headers();
 
-        if (!isset($headers['Auth_key'])) {
+        if (!isset($headers['auth_key'])) {
             echo json_encode(['status' => 402, 'msg' => 'Auth_key is not present']);
             header('HTTP/1.1 402 Auth_key is not present');
             die;
         }
 
-        $this->apiUsersModel->setAuthKey($headers['Auth_key']);
+        $this->apiUsersModel->setAuthKey($headers['auth_key']);
         if (!$this->apiUsersModel->verifyAuthKey()) {
             echo json_encode(['status' => 401, 'msg' => 'Unauthorized Key Used']);
             header('HTTP/1.1 401 Unauthorized Key Used');
@@ -88,11 +88,13 @@ class BaseController
             die;
         }
 
+        //print_r($_SERVER);exit;
+        
         // Validating Content type
-        if ($_SERVER['CONTENT_TYPE'] !== 'application/json') {
+        /*if ($_SERVER['CONTENT_TYPE'] !== 'application/json') {
             header('HTTP/1.1 204 Content type not valid');
             die;
-        }
+        }*/
     }
 
     protected function validateParameters($param)

@@ -27,7 +27,7 @@ class ProductController extends BaseController
 
     /**
      * @OA\Get(
-     *     path="/server/product/{id}", tags={"Product APIs"},
+     *     path="/server/public/index.php/product/{id}", tags={"Product APIs"},
      *     summary="Get All products details / Get Specific product details",
      *     security={{"Auth_key": {}}},
      *     @OA\Parameter(
@@ -62,7 +62,7 @@ class ProductController extends BaseController
 
     /**
      * @OA\Delete(
-     *     path="/server/product",  tags={"Product APIs"},
+     *     path="/server/public/index.php/product",  tags={"Product APIs"},
      *     summary="Delete multiple products",
      *     security={{"Auth_key": {}}},
      *     @OA\RequestBody(
@@ -112,7 +112,7 @@ class ProductController extends BaseController
 
     /**
      * @OA\Post(
-     *     path="/server/product", tags={"Product APIs"},
+     *     path="/server/public/index.php/product", tags={"Product APIs"},
      *     summary="Create a new product",
      *     security={{"Auth_key": {}}},
      *     @OA\RequestBody(

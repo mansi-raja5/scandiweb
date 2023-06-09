@@ -15,7 +15,7 @@ class AttributeController extends BaseController
 
     /**
      * @OA\Post(
-     *     path="/attribute", tags={"Attribute APIs"},
+     *     path="/server/public/index.php/attribute", tags={"Attribute APIs"},
      *     summary="Get attributes for a specific product type",
      *     security={{"Auth_key": {}}},
      *     @OA\RequestBody(
