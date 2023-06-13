@@ -10,7 +10,11 @@ class Database
 
     public function __construct()
     {
-        $this->pdo = new \PDO('mysql:host=localhost;dbname=PMS', 'root', '');
+        $this->pdo = new \PDO(
+            'mysql:host=' . Config::DB_HOST . ';dbname=' . Config::DB_DATABASE_NAME,
+            Config::DB_USERNAME,
+            Config::DB_PASSWORD
+        );
     }
     public function save($tableName, $data)
     {
@@ -42,8 +46,6 @@ class Database
         try {
             $stmt = $this->pdo->prepare($query);
             $stmt->execute($params);
-            //echo $statement->queryString;
-            // $stmt->debugDumpParams();
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\PDOException $e) {
             return $e->getMessage();
