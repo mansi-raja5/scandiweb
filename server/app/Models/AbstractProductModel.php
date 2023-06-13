@@ -3,8 +3,9 @@
 namespace App\Models;
 
 use Inc\Database;
+use App\Models\ProductInterface;
 
-abstract class AbstractProductModel extends Database
+abstract class AbstractProductModel extends Database implements ProductInterface
 {
 	private $productId;
 	private $userId;
@@ -13,11 +14,11 @@ abstract class AbstractProductModel extends Database
 	private $productPrice;
 	private $productTypeKey;
 	private $createdAt;
-	private $productAttributes;
+	private $attributes;
 
 
 	// Constructor
-	public function __construct($productId = null, $userId = null, $productName = null, $productSKU = null, $productPrice = null, $productTypeKey = null)
+	public function __construct($productId = null, $userId = null, $productName = null, $productSKU = null, $productPrice = null, $productTypeKey = null, $attributes = [])
 	{
 		$this->productId = $productId;
 		$this->userId = $userId;
@@ -26,12 +27,11 @@ abstract class AbstractProductModel extends Database
 		$this->productPrice = $productPrice;
 		$this->productTypeKey = $productTypeKey;
 		$this->createdAt = date('Y-m-d H:m:s');
-		$this->productAttributes = [];
+		$this->attributes = $attributes;
 		parent::__construct();
 	}
 
 	abstract public function getProductType();
-	// Getter and setter methods
 
 	public function getProductId()
 	{
@@ -93,34 +93,18 @@ abstract class AbstractProductModel extends Database
 		$this->productTypeKey = $productTypeKey;
 	}
 
-	public function getAttribute($attributeKey)
-	{
-		if (isset($this->productAttributes[$attributeKey])) {
-			return $this->productAttributes[$attributeKey];
-		}
-		return null;
-	}
-
-	public function setAttribute($attributeKey, $attributeValue)
-	{
-		$this->productAttributes[$attributeKey] = $attributeValue;
-	}
-
-	/**
-	 * @return mixed
-	 */
 	public function getCreatedAt()
 	{
 		return $this->createdAt;
 	}
 
-	/**
-	 * @param mixed $createdAt 
-	 * @return self
-	 */
-	public function setCreatedAt($createdAt): self
+	public function getAttributes()
 	{
-		$this->createdAt = $createdAt;
-		return $this;
+		return $this->attributes;
+	}
+
+	public function setAttributes($attributes)
+	{
+		$this->attributes = $attributes;
 	}
 }

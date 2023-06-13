@@ -1,16 +1,15 @@
 <?php
+
 namespace App\Models;
 
-class ProductType
+use App\Models\ProductTypeAttributesModel;
+use Inc\Database;
+
+class ProductTypeModel extends Database
 {
+	private $table = "product_type_attributes";
 	private $productTypeKey;
 	private $productTypeLabel;
-
-	public function __construct($productTypeKey, $productTypeLabel)
-	{
-		$this->productTypeKey = $productTypeKey;
-		$this->productTypeLabel = $productTypeLabel;
-	}
 
 	public function getProductTypeKey()
 	{
@@ -30,5 +29,15 @@ class ProductType
 	public function setProductTypeLabel($productTypeLabel)
 	{
 		$this->productTypeLabel = $productTypeLabel;
+	}
+
+	public function getAttributes()
+	{
+		if ($this->getProductTypeKey()) {
+			$columns = 'attribute_code, attribute_label';
+			$where = 'product_type_key = :product_type_key';
+			$params = [':product_type_key' => $this->getProductTypeKey()];
+			return $this->select($this->table, $columns, $where, $params);
+		}
 	}
 }

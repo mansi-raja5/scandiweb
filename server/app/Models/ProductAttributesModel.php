@@ -9,28 +9,16 @@ class ProductAttributesModel extends Database
 	private $table = 'product_attributes';
 	private $productAttributesId;
 	private $productId;
-	private $attributeId;
+	private $attributeCode;
 	private $attributeValue;
-	private $createdAt;
 
-	public function __construct($productAttributesId = null, $productId = null, $attributeId = null, $attributeValue = null)
+	public function __construct($productAttributesId = null, $productId = null, $attributeCode = null, $attributeValue = null)
 	{
 		$this->productAttributesId = $productAttributesId;
 		$this->productId = $productId;
-		$this->attributeId = $attributeId;
+		$this->attributeCode = $attributeCode;
 		$this->attributeValue = $attributeValue;
-		$this->createdAt = date('Y-m-d H:m:s');
 		parent::__construct();
-	}
-
-	public function getProductAttributesId()
-	{
-		return $this->productAttributesId;
-	}
-
-	public function setProductAttributesId($productAttributesId)
-	{
-		$this->productAttributesId = $productAttributesId;
 	}
 
 	public function getProductId()
@@ -43,14 +31,14 @@ class ProductAttributesModel extends Database
 		$this->productId = $productId;
 	}
 
-	public function getAttributeId()
+	public function getAttributeCode()
 	{
-		return $this->attributeId;
+		return $this->attributeCode;
 	}
 
-	public function setAttributeId($attributeId)
+	public function setAttributeCode($attributeCode)
 	{
-		$this->attributeId = $attributeId;
+		$this->attributeCode = $attributeCode;
 	}
 
 	public function getAttributeValue()
@@ -72,51 +60,41 @@ class ProductAttributesModel extends Database
 		//clean data
 		$this->productAttributesId = filter_var($this->productAttributesId, FILTER_VALIDATE_INT);
 		$this->productId = filter_var($this->productId, FILTER_VALIDATE_INT);
-		$this->attributeId = filter_var($this->attributeId, FILTER_VALIDATE_INT);
 		$this->attributeValue = trim(htmlspecialchars(strip_tags($this->attributeValue)));
-		$this->createdAt = date('Y-m-d H:m:s');
 
 		$data = array(
-			'product_id' => $this->escapeValue($this->productId),
-			'attribute_id' => $this->escapeValue($this->attributeId),
-			'attribute_value' => $this->escapeValue($this->attributeValue),
-			'created_at' => $this->escapeValue($this->createdAt)
+			'product_id' => $this->productId,
+			'attribute_code' => $this->attributeCode,
+			'attribute_value' => $this->attributeValue,
+			'created_at' => date('Y-m-d H:m:s')
 		);
 
-		$productAttributeId = $this->insert($this->table, $data);
+		$productAttributeId = $this->save($this->table, $data);
 
 		if ($productAttributeId) {
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 	/**
 	 * Summary of getProductAttributeById
 	 * @return array<array>
 	 */
-	public function getProductAttributeById()
+	public function getProductAttributes()
 	{
-		//clean data
-		$this->productAttributesId = filter_var($this->productAttributesId, FILTER_VALIDATE_INT);
-		$this->productId = filter_var($this->productId, FILTER_VALIDATE_INT);
-		$this->attributeId = filter_var($this->attributeId, FILTER_VALIDATE_INT);
-		$this->attributeValue = trim(htmlspecialchars(strip_tags($this->attributeValue)));
-		$this->createdAt = date('Y-m-d H:m:s');
-
-		$attributesData = $this->select("SELECT * FROM product_type_attributes PTA 
-		LEFT JOIN product_attributes PA ON PA.attribute_id = PTA.attribute_id 
-		WHERE PA.product_id = " . $this->getProductId());
+		$columns = 'attribute_code, attribute_value';
+		$where = 'product_id = :product_id';
+		$params = [':product_id' => $this->getProductId()];
+		$attributesData = [];
+		$attributesData = $this->select($this->table, $columns, $where, $params);
 		$attributes = [];
 		foreach ($attributesData as $attributeData) {
-			$attributeId = $attributeData['attribute_id'];
+			$attributeId = $attributeData['attribute_code'];
 			$attributeValue = $attributeData['attribute_value'];
-			$attributeLabel = $attributeData['attribute_label'];
 
-			$attributes[$attributeId]['attribute_id'] = $attributeId;
+			$attributes[$attributeId]['attribute_code'] = $attributeId;
 			$attributes[$attributeId]['attribute_value'] = $attributeValue;
-			$attributes[$attributeId]['attribute_label'] = $attributeLabel;
 		}
 		return $attributes;
 	}

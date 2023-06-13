@@ -1,42 +1,33 @@
 <?php
+
 namespace App\Models;
 
 use Inc\Database;
 
 class ProductTypeAttributesModel extends Database
 {
-	private $attributeId;
-	private $attributeKey;
+	private $table = "product_type_attributes";
+	private $attributeCode;
 	private $attributeLabel;
 	private $productTypeKey;
 
-	public function __construct($attributeId = null, $attributeKey = null, $attributeLabel = null, $productTypeKey = null)
+	public function __construct($attributeCode = null, $attributeLabel = null, $productTypeKey = null)
 	{
-		$this->attributeId = $attributeId;
-		$this->attributeKey = $attributeKey;
+		$this->attributeCode = $attributeCode;
 		$this->attributeLabel = $attributeLabel;
 		$this->productTypeKey = $productTypeKey;
 		parent::__construct();
 	}
 
-	public function getAttributeId()
+	public function getAttributeCode()
 	{
-		return $this->attributeId;
+		return $this->attributeCode;
 	}
 
-	public function setAttributeId($attributeId)
+	public function setAttributeCode($attributeCode): self
 	{
-		$this->attributeId = $attributeId;
-	}
-
-	public function getAttributeKey()
-	{
-		return $this->attributeKey;
-	}
-
-	public function setAttributeKey($attributeKey)
-	{
-		$this->attributeKey = $attributeKey;
+		$this->attributeCode = $attributeCode;
+		return $this;
 	}
 
 	public function getAttributeLabel()
@@ -61,8 +52,10 @@ class ProductTypeAttributesModel extends Database
 
 	public function getAttributesByType()
 	{
-		$sql = "SELECT * FROM product_type_attributes WHERE product_type_key = '" . $this->getProductTypeKey() . "'";
-		$result = $this->select($sql);
-		return $result;
+		$columns = 'attribute_code, attribute_label';
+		$where = 'product_type_key = :product_type_key';
+		$params = [':product_type_key' => $this->getProductTypeKey()];
+
+		return $this->select($this->table, $columns, $where, $params);
 	}
 }

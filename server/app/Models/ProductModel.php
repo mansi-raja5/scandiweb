@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\ProductType;
+use App\Models\ProductTypeModel;
 use App\Models\AbstractProductModel;
 use App\Models\ProductAttributesModel;
 
@@ -13,30 +13,19 @@ class ProductModel extends AbstractProductModel
     private $productType;
     private $table = 'products';
 
-    public function __construct(
-        $productId = null,
-        $userId = null,
-        $productName = null,
-        $productSKU = null,
-        $productPrice = null,
-        $productTypeKey = null
-    ) {
-        parent::__construct($productId, $userId, $productName, $productSKU, $productPrice, $productTypeKey);
-    }
     public function getProductType()
     {
         return $this->productType;
     }
-    public function setProductType(ProductType $productType)
+    public function setProductType(ProductTypeModel $productType)
     {
         $this->productType = $productType;
     }
     public function listProducts()
     {
         $products = [];
-        $condition = $this->getProductId() ? "product_id=" . $this->getProductId() : "1=1";
-        $sql = "SELECT * FROM products WHERE $condition";
-        $productData = $this->select($sql);
+        $productData = $this->select($this->table);
+
         $productAttribute = new ProductAttributesModel();
         foreach ($productData as $data) {
             $productId = $data['product_id'];
@@ -44,24 +33,9 @@ class ProductModel extends AbstractProductModel
             $products[$productId]['attributes'] = [];
             // Create a new product attribute and set its value
             $productAttribute->setProductId($productId);
-            $products[$productId]['attributes'] = $productAttribute->getProductAttributeById();
+            $products[$productId]['attributes'] = $productAttribute->getProductAttributes();
         }
         return $products;
-    }
-
-    /**
-     * Summary of deleteProduct
-     * @return bool
-     */
-    public function deleteProduct()
-    {
-        //clean data
-        $this->setProductId(filter_var($this->getProductId(), FILTER_VALIDATE_INT));
-        $sql = "DELETE FROM product_attributes WHERE product_id = " . $this->escapeValue($this->getProductId());
-        $this->query($sql);
-        $sql = "DELETE FROM $this->table WHERE product_id = " . $this->escapeValue($this->getProductId());
-        $this->query($sql);
-        return true;
     }
 
     /**
@@ -71,57 +45,31 @@ class ProductModel extends AbstractProductModel
      */
     public function massDeleteProducts($productIds)
     {
-        // Clean data
-        foreach ($productIds as $index => $productId) {
-            $productIds[$index] = filter_var($productId, FILTER_VALIDATE_INT);
-        }
+        $tableName = 'product_attributes';
+        $where = 'product_id IN';
 
-        // Prepare the placeholders for the IN clause
-        $placeholders = implode(',', array_fill(0, count($productIds), '?'));
-
-        // Delete the product attributes
-        $attributeSql = "DELETE FROM product_attributes WHERE product_id IN ($placeholders)";
-        $this->query($attributeSql, $productIds);
-
-        // Delete the products
-        $productSql = "DELETE FROM $this->table WHERE product_id IN ($placeholders)";
-        return $this->query($productSql, $productIds);
+        $this->delete($tableName, $where, $productIds);
+        return $this->delete($this->table, $where, $productIds);
     }
 
-    /**
-     * Summary of saveProduct
-     * @return mixed
-     */
     public function saveProduct()
     {
-        //clean data
-        $this->setUserId(filter_var($this->getUserId(), FILTER_VALIDATE_INT));
-        $this->setProductName(trim(htmlspecialchars(strip_tags($this->getProductName()))));
-        $this->setProductSKU(trim(htmlspecialchars(strip_tags($this->getProductSKU()))));
-        $this->setProductPrice(trim(htmlspecialchars(strip_tags($this->getProductPrice()))));
-        $this->setProductTypeKey(trim(htmlspecialchars(strip_tags($this->getProductTypeKey()))));
-        $this->setCreatedAt(date('Y-m-d H:m:s'));
-        // Check if SKU already exists
-        $existingProduct = $this->getProductBySKU($this->getProductSKU());
-        if (count($existingProduct)) {
-            $result = ['message' => 'SKU is present in the system! Please try with the other SKU'];
-            return json_encode($result);
-        }
         $data = array(
-            'user_id' => $this->escapeValue($this->getUserId()),
-            'product_name' => $this->escapeValue($this->getProductName()),
-            'product_sku' => $this->escapeValue($this->getProductSKU()),
-            'product_price' => $this->escapeValue($this->getProductPrice()),
-            'product_type_key' => $this->escapeValue($this->getProductTypeKey()),
-            'created_at' => $this->escapeValue($this->getCreatedAt())
+            'user_id' => $this->getUserId(),
+            'product_name' => $this->getProductName(),
+            'product_sku' => $this->getProductSKU(),
+            'product_price' => $this->getProductPrice(),
+            'product_type_key' => $this->getProductTypeKey(),
+            'created_at' => $this->getCreatedAt()
         );
-        $productId = $this->insert($this->table, $data);
+        $productId = $this->save('products', $data);
+
         // Check if product attributes are provided in the request
         if (is_array($this->getProductAttribute())) {
             foreach ($this->getProductAttribute() as $attribute) {
-                $attributeId = $attribute->attribute_id;
+                $attributeCode = $attribute->attribute_code;
                 $attributeValue = $attribute->attribute_value;
-                $productAttribute = new ProductAttributesModel(null, $productId, $attributeId, $attributeValue);
+                $productAttribute = new ProductAttributesModel(null, $productId, $attributeCode, $attributeValue);
                 $productAttribute->saveProductAttribute();
             }
         }
@@ -131,25 +79,59 @@ class ProductModel extends AbstractProductModel
             return json_encode(array('message' => 'Product cannot be added right now..!'));
         }
     }
-    private function getProductBySKU($sku)
+
+    public function validateAndSaveProduct()
     {
-        $sql = "SELECT * FROM products WHERE product_sku = '$sku'";
-        return $this->select($sql);
+        $productTypeModel = new ProductTypeModel();
+        $productTypeModel->setProductTypeKey($this->getProductTypeKey());
+
+        $this->setProductType($productTypeModel); //abstract method
+        $this->setProductAttribute($this->getAttributes());
+
+        $missingAttributeCodes = $this->validateProductAttributes();
+        if (!empty($missingAttributeCodes)) {
+            echo json_encode(['message' => "Missing attribute codes: " . implode(', ', $missingAttributeCodes)]);
+            header('HTTP/1.1 400');
+            die;
+        }
+
+        // Check if SKU already exists
+        $existingProduct = $this->getProductBySKU();
+        if (count($existingProduct)) {
+            echo json_encode(['message' => 'SKU is present in the system! Please try with the other SKU']);
+            header('HTTP/1.1 400');
+            die;
+        }
+
+        //save product
+        echo $this->saveProduct();
     }
-    /**
-     * @return mixed
-     */
+
+
+    public function getProductBySKU()
+    {
+        $where = 'product_sku = :product_sku';
+        $params = [':product_sku' => $this->getProductSKU()];
+        return $this->select($this->table, 'product_id', $where, $params);
+    }
+
     public function getProductAttribute()
     {
         return $this->productAttribute;
     }
-    /**
-     * @param mixed $productAttribute
-     * @return self
-     */
+
     public function setProductAttribute($productAttribute): self
     {
         $this->productAttribute = $productAttribute;
         return $this;
+    }
+
+    public function validateProductAttributes()
+    {
+        $typeAttributes = $this->getProductType()->getAttributes();
+        $typeAttributes = array_column($typeAttributes, 'attribute_code');
+        $productAttributes = array_column($this->productAttribute, 'attribute_code');
+
+        return array_diff($typeAttributes, $productAttributes);
     }
 }
